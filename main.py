@@ -50,7 +50,31 @@ def get_trend_details(first_trend):
         search_results = twitter_api.search.tweets(**twitter_dict)
         statuses += search_results['statuses']
 
-    print json.dumps(statuses[0], indent=1)
+    #print json.dumps(statuses[0], indent=1)
+    return statuses
+
+def get_tweet_contents(status_details):
+    status_text = [status['text']
+                   for status in status_details]
+
+    screen_name = [user_mention['screen_name']
+                   for status in status_details
+                   for user_mention in status['entities']['user_mentions']]
+
+    hashtags = [hash_text['text']
+                for status in status_details
+                for hash_text in status['entities']['hashtags']]
+
+    words = [word
+             for text in status_text
+             for word in text.split()]
+
+    #print json.dumps(status_text[0:5], indent=1)
+    #print json.dumps(screen_name[0:5], indent=1)
+    #print json.dumps(hashtags[0:5], indent=1)
+    #print json.dumps(words[0:5], indent=1)
+
+    return (status_text, screen_name, hashtags, words)
 
 def main():
     print "Authenticating with Twitter"
@@ -70,7 +94,10 @@ def main():
     print "first common trend is ", first_trend
 
     # get tweet details for first trend
-    get_trend_details(first_trend)
+    status_details = get_trend_details(first_trend)
+
+    # extract tweet details like text, screen name and hashtags
+    (status_text, screen_name, hashtags, words) = get_tweet_contents(status_details)
 
 if __name__ == '__main__':
     main()
