@@ -2,7 +2,6 @@ __author__ = 'suhas'
 import twitter
 import json
 
-
 CONSUMER_KEY = ''
 CONSUMER_SECRET = ''
 OAUTH_TOKEN = ''
@@ -38,7 +37,6 @@ def get_trend_details(first_trend):
     statuses = search_results['statuses']
 
     for _ in range(5):
-        print "length of statuses ", len(statuses)
         try:
             next_results = search_results['search_metadata']['next_results']
         except KeyError, e:
@@ -76,6 +74,18 @@ def get_tweet_contents(status_details):
 
     return (status_text, screen_name, hashtags, words)
 
+def show_top_details(words, screen_name, hashtags):
+    from collections import Counter
+    from prettytable import PrettyTable
+
+    for label, data in (('Words', words),('Screen Name', screen_name), ('Hashtags', hashtags)):
+        pt = PrettyTable(field_names=[label, 'Count'])
+        c = Counter(data)
+        [pt.add_row(kv) for kv in c.most_common()[:10]]
+        pt.align['label'], pt.align['Count'] = 'l', 'r'
+        print pt
+
+
 def main():
     print "Authenticating with Twitter"
     print
@@ -98,6 +108,9 @@ def main():
 
     # extract tweet details like text, screen name and hashtags
     (status_text, screen_name, hashtags, words) = get_tweet_contents(status_details)
+
+    # display top 10 tweet details
+    show_top_details(words, screen_name, hashtags)
 
 if __name__ == '__main__':
     main()
