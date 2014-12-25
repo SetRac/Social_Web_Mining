@@ -1,6 +1,9 @@
 __author__ = 'suhas'
 import twitter
 import json
+from collections import Counter
+from prettytable import PrettyTable
+
 
 CONSUMER_KEY = ''
 CONSUMER_SECRET = ''
@@ -75,8 +78,8 @@ def get_tweet_contents(status_details):
     return (status_text, screen_name, hashtags, words)
 
 def show_top_details(words, screen_name, hashtags):
-    from collections import Counter
-    from prettytable import PrettyTable
+    #from collections import Counter
+    #from prettytable import PrettyTable
 
     for label, data in (('Words', words),('Screen Name', screen_name), ('Hashtags', hashtags)):
         pt = PrettyTable(field_names=[label, 'Count'])
@@ -84,6 +87,24 @@ def show_top_details(words, screen_name, hashtags):
         [pt.add_row(kv) for kv in c.most_common()[:10]]
         pt.align['label'], pt.align['Count'] = 'l', 'r'
         print pt
+
+def lexical_diversity(items):
+    return 1.0 * (len(set(items))) / len(items)
+
+def average_words(words):
+    total_words = sum([len(w.split()) for w in words])
+    return 1.0 * total_words / len(words)
+
+def find_mostpopular_retweet(statuses):
+    retweets = [(status['retweet_count'], status['retweeted_status']['user']['screen_name'], status['text'])
+                for status in statuses
+                if status.has_key('retweeted_status')]
+    #print retweets
+    pt = PrettyTable(field_names=['Count', 'Screen Names', 'Text'])
+    [pt.add_row(row) for row in sorted(retweets, reverse=True)[:5]]
+    pt.max_width['Text'] = 50
+    pt.align = 'l'
+    print pt
 
 
 def main():
@@ -109,8 +130,19 @@ def main():
     # extract tweet details like text, screen name and hashtags
     (status_text, screen_name, hashtags, words) = get_tweet_contents(status_details)
 
-    # display top 10 tweet details
+    # display top 10 tweet's details
     show_top_details(words, screen_name, hashtags)
+
+    # compute lexical diversity of the tweet
+    print "lexical diversity"
+    print lexical_diversity(words)
+    print lexical_diversity(screen_name)
+    print lexical_diversity(hashtags)
+    print "Average number of words in status text is"
+    print average_words(status_text)
+
+    # find most popular retweets
+    find_mostpopular_retweet(status_details)
 
 if __name__ == '__main__':
     main()
