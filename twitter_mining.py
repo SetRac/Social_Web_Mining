@@ -1,6 +1,7 @@
 __author__ = 'suhas'
 import twitter
 import json
+import matplotlib.pyplot as plt
 from collections import Counter
 from prettytable import PrettyTable
 
@@ -105,7 +106,34 @@ def find_mostpopular_retweet(statuses):
     pt.max_width['Text'] = 50
     pt.align = 'l'
     print pt
+    return retweets
 
+def plot_word_frequencies(words):
+    word_counts = sorted(Counter(words).values(), reverse=True)
+    plt.loglog(word_counts)
+    plt.title("Word Frequencies")
+    plt.ylabel("Frequency")
+    plt.xlabel("Word Rank")
+    plt.show()
+
+def plot_hist_tweet_details(words, screen_name, hashtags):
+    for label, data in (('Words', words), ('Screen Name', screen_name), ('Hashtags', hashtags)):
+        c = Counter(data)
+        plt.hist(c.values())
+
+        plt.title(label)
+        plt.ylabel("Number of items in bin")
+        plt.xlabel("Bins (Number of items appeared)")
+        plt.show()
+
+def plot_hist_retweeted_counts(retweets):
+    # _ is used to unpack the other 2 tuple values of retweets
+    total = [count for count, _, _ in retweets]
+    plt.hist(total)
+    plt.title("Retweets")
+    plt.xlabel("Bins (Number of times retweeted)")
+    plt.ylabel("Number of tweets in the bin")
+    plt.show()
 
 def main():
     print "Authenticating with Twitter"
@@ -142,7 +170,18 @@ def main():
     print average_words(status_text)
 
     # find most popular retweets
-    find_mostpopular_retweet(status_details)
+    retweets = find_mostpopular_retweet(status_details)
+
+    # data visualizations
+
+    # visualize the frequencies of words
+    plot_word_frequencies(words)
+
+    # generate histograms for words, screen_names and hashtags (use binning)
+    plot_hist_tweet_details(words, screen_name, hashtags)
+
+    # generate histogram for retweeted counts
+    plot_hist_retweeted_counts(retweets)
 
 if __name__ == '__main__':
     main()

@@ -9,4 +9,10 @@ pip install twitter
 ```python
 pip install prettytable
 ```
-* Create a Twitter app and enter Consumer and Access Keys in main.py
+* Install **matplotlib** Python package for visualization
+```python
+pip install matplotlib
+```
+
+
+* Create a Twitter app and enter Consumer and Access Keys in twitter_mining.py
