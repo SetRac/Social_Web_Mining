@@ -1,6 +1,6 @@
 Mining Twitter Data with Python
 -------------------------------------
-###Getting Started
+###Getting Started for mining Twitter
 * Install **Twitter** Package for Python
 ```python
 pip install twitter
@@ -16,3 +16,15 @@ pip install matplotlib
 
 
 * Create a Twitter app and enter Consumer and Access Keys in twitter_mining.py
+
+###Getting Started for mining Twitter
+* Install **Requests** Package for querying Graph API over http
+```python
+pip install requests
+```
+* Install **Facebook** Package for querying Graph API from Python
+```python
+pip install facebook-sdk
+```
+
+* Get Access Token from [Facebook Developer site](https://developers.facebook.com/) and enter it in facebook_mining.py
