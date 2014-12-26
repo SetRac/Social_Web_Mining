@@ -17,7 +17,7 @@ pip install matplotlib
 
 * Create a Twitter app and enter Consumer and Access Keys in twitter_mining.py
 
-###Getting Started for mining Twitter
+###Getting Started for mining Facebook
 * Install **Requests** Package for querying Graph API over http
 ```python
 pip install requests
