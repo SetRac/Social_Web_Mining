@@ -2,6 +2,8 @@ __author__ = 'suhas'
 import requests
 import facebook
 import json
+import matplotlib.pyplot as plt
+
 from prettytable import PrettyTable
 from collections import Counter
 
@@ -81,6 +83,44 @@ def get_popular_friend_likes(FB, likes):
     print "Top 10 like category among friends are"
     print pt
 
+    return friends_likes
+
+def get_common_likes(FB, friend_likes):
+    my_likes = [like['name'] for like in FB.get_connections('me', 'likes')['data']]
+    pt = PrettyTable(field_names=["MyLikes"])
+    pt.align = 'l'
+    [pt.add_row((ml, )) for ml in my_likes]
+    print "My likes are"
+    print pt
+
+    common_likes = list(set(my_likes) & set(friend_likes))
+
+    pt = PrettyTable(field_names=["Common Likes"])
+    pt.align = 'l'
+    [pt.add_row((cl,)) for cl in common_likes]
+    print "Common Likes are"
+    print pt
+    return common_likes
+
+def find_similar_friends(FB, common_likes, likes):
+    similar_friends = [(friend, friend_like['name'])
+                        for friend, friend_likes in likes.items()
+                        for friend_like in friend_likes
+                        if friend_like.get('name') in common_likes]
+    # remove duplicates
+    ranked_friends = Counter([friend for (friend, like) in list(set(similar_friends))])
+
+    pt = PrettyTable(field_names=["Name", "Common Likes"])
+    pt.align["Name"], pt.align["Common Likes"] = 'l', 'r'
+    [pt.add_row(rf) for rf in sorted(ranked_friends.items(), reverse=True)]
+
+    print "My Similar friends based on likes are"
+    print pt
+
+    plt.hist(ranked_friends.values())
+    plt.xlabel("Bins (Number of friends with same likes)")
+    plt.ylabel("Number of shared likes in each bin")
+    plt.show()
 
 def main():
     print "Facebook Mining"
@@ -101,6 +141,13 @@ def main():
     likes = get_friends_likes(FB)
 
     # calculate most popular like among friends
-    get_popular_friend_likes(FB, likes)
+    friend_likes = get_popular_friend_likes(FB, likes)
+
+    # find common likes between one's self and friends
+    common_likes = get_common_likes(FB, friend_likes)
+
+    # identify most similar friends based on common likes
+    find_similar_friends(FB, common_likes, likes)
+
 if __name__ == '__main__':
     main()
