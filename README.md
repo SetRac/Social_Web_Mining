@@ -1,4 +1,4 @@
-Mining Twitter Data with Python
+Mining Social Web - Twitter and Facebook
 -------------------------------------
 ###Getting Started for mining Twitter
 * Install **Twitter** Package for Python
